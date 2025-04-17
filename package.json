@@ -1,0 +1,22 @@
+{
+  "name": "usb-access-guard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "18": "^0.0.0",
+    "body-parser": "^2.2.0",
+    "diskpart": "^1.0.2",
+    "drivelist": "^12.0.2",
+    "express": "^5.1.0",
+    "open": "^7.4.2",
+    "usb-detection": "^4.14.2"
+  },
+  "description": ""
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>USB Access Form</title>
+  <meta charset="UTF-8" />
+
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  </style>
+
+
+
+
+</head>
+<body>
+  <h2>Enter your name and phone number to use the USB</h2>
+  <form id="usbForm">
+    <input id="name" type="text" name="name" placeholder="Your name" required><br>
+    <input id="num" type="text" name="phone" placeholder="Phone number" required><br>
+    <button type="submit" disabled>Submit</button>
+  </form>
+  <p id="status"></p>
+
+  <h2>USB Log Entries</h2>
+  <table id="logTable">
+    <thead>
+      <tr><th>Timestamp</th><th>Name</th><th>Phone</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button id="clearButton">Clear Table</button>
+
+
+
+
+<script>
+ 
+
+  // Funkcija za proveru popunjenosti forme
+  function checkFormCompletion() {
+    if (nameInput.value.trim() && phoneInput.value.trim()) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+
+  // Pozivaj ovu funkciju svaki put kad korisnik unese podatke
+  nameInput.addEventListener("input", checkFormCompletion);
+  phoneInput.addEventListener("input", checkFormCompletion);
+</script>
+
+
+
+
+
+
+<script>
+
+document.getElementById("clearButton").addEventListener("click", function() {
+    const tbody = document.querySelector('#logTable tbody');
+    tbody.innerHTML = ''; // Očisti sve redove u tabeli
+  });
+  // Provera da li je forma popunjena
+  const submitButton = document.querySelector("button[type='submit']");
+  const nameInput = document.getElementById("name");
+  const phoneInput = document.getElementById("num");
+
+  // Funkcija za proveru popunjenosti forme
+  function checkFormCompletion() {
+    if (nameInput.value.trim() && phoneInput.value.trim()) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+
+  // Pozivaj ovu funkciju svaki put kad korisnik unese podatke
+  nameInput.addEventListener("input", checkFormCompletion);
+  phoneInput.addEventListener("input", checkFormCompletion);
+
+  // Obrađivanje slanja forme
+  document.getElementById("usbForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Sprečava slanje forme
+
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+
+    fetch('/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone })
+    })
+    .then(response => response.json())
+    .then(() => {
+      // Očisti formu nakon uspešnog slanja
+      nameInput.value = '';
+      phoneInput.value = '';
+      submitButton.disabled = true;
+      
+      // Osveži logove
+      loadLogs();
+    })
+    .catch(err => {
+      console.error('Error submitting form:', err);
+    });
+  });
+
+  // Funkcija za učitavanje logova
+  function loadLogs() {
+    fetch('/log')
+      .then(res => res.json())
+      .then(rows => {
+        const tbody = document.querySelector('#logTable tbody');
+        tbody.innerHTML = ''; // Očisti postojeće redove
+
+        rows.forEach(row => {
+          const tr = document.createElement('tr');
+          row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      });
+  }
+
+  // Prvi poziv za učitavanje logova prilikom učitavanja stranice
+  window.onload = loadLogs;
+</script>
+
+<!--
+<script>
+  const submitButton = document.querySelector("button[type='submit']");
+  const nameInput = document.getElementById("name");
+  const phoneInput = document.getElementById("num");
+
+  // Funkcija za proveru popunjenosti forme
+  function checkFormCompletion() {
+    if (nameInput.value.trim() && phoneInput.value.trim()) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
+
+  // Pozivaj ovu funkciju svaki put kad korisnik unese podatke
+  nameInput.addEventListener("input", checkFormCompletion);
+  phoneInput.addEventListener("input", checkFormCompletion);
+
+  // Obrađivanje slanja forme
+  document.getElementById("usbForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Sprečava slanje forme
+
+    const name = nameInput.value;
+    const phone = phoneInput.value;
+
+    // Pošaljite podatke na server
+    fetch('/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone })
+    })
+    .then(response => response.json())
+    .then(() => {
+      // Očisti formu nakon uspešnog slanja
+      nameInput.value = '';
+      phoneInput.value = '';
+      submitButton.disabled = true;
+
+      // Dodaj novi red u tabelu (samo sa novim podacima)
+      const tbody = document.querySelector('#logTable tbody');
+      const tr = document.createElement('tr');
+      const timestamp = new Date().toISOString();  // Za timestamp
+      const row = [timestamp, name, phone];  // Podaci koje šaljemo u tabelu
+      row.forEach(cell => {
+        const td = document.createElement('td');
+        td.textContent = cell;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    })
+    .catch(err => {
+      console.error('Error submitting form:', err);
+    });
+  });
+
+  // Funkcija za brisanje sadržaja tabele
+  document.getElementById("clearButton").addEventListener("click", function() {
+    const tbody = document.querySelector('#logTable tbody');
+    tbody.innerHTML = ''; // Očisti sve redove u tabeli
+  });
+</script>
+-->
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
