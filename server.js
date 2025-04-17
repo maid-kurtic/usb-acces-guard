@@ -7,8 +7,6 @@ const { exec } = require("child_process");
 const app = express();
 const PORT = 3000;
 const LOG_PATH = path.join(__dirname, "logs/usb_log.csv");
-// onemogucavanje
-///najnovije
 
 function disableDrive(driveLetter) {
   // Putanja do skripte
@@ -44,10 +42,8 @@ function enableDrive(driveLetter) {
   });
 }
 
-// Pozovite funkciju za ponovno omogućavanje D diska
 app.use(bodyParser.json()); // Pravilno parsiranje JSON podataka
 app.use(express.static(path.join(__dirname, "public")));
-// Proveri da li fajl postoji, ako ne, kreiraj ga
 if (!fs.existsSync(LOG_PATH)) {
   fs.writeFileSync(LOG_PATH, "Timestamp,Name,Phone\n");
 }
@@ -57,7 +53,6 @@ app.post("/submit", (req, res) => {
   const { name, phone } = req.body;
   const timestamp = new Date().toISOString();
   fs.appendFileSync(LOG_PATH, `"${timestamp}","${name}","${phone}"\n`);
-  // Odgovori sa JSON porukom o uspehu
   res.json({ success: true });
 });
 // GET endpoint za vraćanje logova
