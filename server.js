@@ -10,7 +10,7 @@ const LOG_PATH = path.join(__dirname, "logs/usb_log.csv");
 // onemogucavanje
 ///najnovije
 
-function disableDrive(driveLetter) {
+function disableDrive() {
   // Putanja do skripte
   const scriptPath = path.join(__dirname, "disable_drive.txt");
   const command = `powershell -Command "Start-Process cmd -ArgumentList '/c diskpart /s \\"${scriptPath}\\"' -Verb RunAs"`;
@@ -23,11 +23,11 @@ function disableDrive(driveLetter) {
       console.error(`stderr: ${stderr}`);
       return;
     }
-    console.log(`Disk ${driveLetter} je onemogućen.`);
+    console.log(`Disk D je onemogućen.`);
   });
 }
 ///najnovije
-function enableDrive(driveLetter) {
+function enableDrive() {
   // Putanja do skripte
   const scriptPath = path.join(__dirname, "enable_drive.txt");
   const command = `powershell -Command "Start-Process cmd -ArgumentList '/c diskpart /s \\"${scriptPath}\\"' -Verb RunAs"`;
@@ -40,20 +40,18 @@ function enableDrive(driveLetter) {
       console.error(`stderr: ${stderr}`);
       return;
     }
-    console.log(`Disk ${driveLetter} je ponovo omogućen.`);
+    console.log(`Disk D je ponovo omogućen.`);
   });
 }
 
-// Pozovite funkciju za ponovno omogućavanje D diska
 app.use(bodyParser.json()); // Pravilno parsiranje JSON podataka
 app.use(express.static(path.join(__dirname, "public")));
-// Proveri da li fajl postoji, ako ne, kreiraj ga
 if (!fs.existsSync(LOG_PATH)) {
   fs.writeFileSync(LOG_PATH, "Timestamp,Name,Phone\n");
 }
 // POST endpoint za unos podataka
 app.post("/submit", (req, res) => {
-  enableDrive('D');
+  enableDrive();
   const { name, phone } = req.body;
   const timestamp = new Date().toISOString();
   fs.appendFileSync(LOG_PATH, `"${timestamp}","${name}","${phone}"\n`);
@@ -63,7 +61,7 @@ app.post("/submit", (req, res) => {
 // GET endpoint za vraćanje logova
 app.get("/log", (req, res) => {
   const csv = fs.readFileSync(LOG_PATH, "utf-8");
-  const lines = csv.trim().split("\n").slice(1); // Skip header
+  const lines = csv.trim().split("\n").slice(1); 
   const rows = lines.map((line) =>
     line.split(",").map((cell) => cell.replace(/\"/g, ""))
   );
@@ -78,7 +76,7 @@ usbDetect.startMonitoring();
 usbDetect.on("add", (device) => {
   console.log("USB inserted:", device);
   //--------------
-  disableDrive('D')
+  disableDrive()
   exec(`start chrome http://localhost:${PORT}`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
